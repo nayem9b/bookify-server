@@ -1,15 +1,30 @@
 const Book = require('../models/Book');
+const { getCachedData, cacheData } = require('../utils/redis');
+const CACHE_KEY = 'all_books';
 
 const bookController = {
   // Get all books
-  getAllBooks: async (req, res, next) => {
-    try {
-      const books = await Book.findAll();
-      res.json(books);
-    } catch (error) {
-      next(error);
+getAllBooks : async (req, res, next) => {
+  try {
+    // Try to get data from cache first
+    const cachedData = await getCachedData(CACHE_KEY);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.status(200).json(cachedData);
     }
-  },
+
+    // If not in cache, get from database
+    console.log('Cache miss, querying database');
+    const books = await Book.findAll();
+    
+    // Cache the data for future requests
+    await cacheData(CACHE_KEY, books);
+    
+    res.status(200).json(books);
+    } catch (error) {
+    next(error);
+  }
+},
 
   // Get single book by ID
   getBookById: async (req, res, next) => {

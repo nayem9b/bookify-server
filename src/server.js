@@ -8,6 +8,7 @@ const wishlistRoutes = require('./routes/wishlistRoutes');
 const userRoutes = require('./routes/userRoutes');
 // const productRoutes = require('./routes/productRoutes');
 const errorHandler = require('./middleware/errorHandler');
+const { connectRedis } = require('./utils/redis');
 
 const app = express();
 require('dotenv').config();
@@ -18,6 +19,8 @@ app.use(express.json());
 
 // Database connection
 connectDB();
+// Connect to Redis
+connectRedis().catch(console.error);
 
 // Routes
 app.use('/api/books', bookRoutes);

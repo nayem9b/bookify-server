@@ -8,7 +8,7 @@ router.post('/', authenticate, bookingController.createBooking);
 router.get('/my-bookings', authenticate, bookingController.getUserBookings);
 
 // Admin routes
-router.get('/', authenticate, authorize(['admin']), bookingController.getAllBookings);
+router.get('/', bookingController.getAllBookings);
 router.put('/:id/status', authenticate, authorize(['admin']), bookingController.updateBookingStatus);
 
 module.exports = router;

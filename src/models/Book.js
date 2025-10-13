@@ -19,7 +19,7 @@ const bookSchema = z.object({
 
 class Book {
   static collection() {
-    return getDB().collection('CategoryBooks');
+    return getDB().collection('all_books');
   }
 
   static async validate(data) {

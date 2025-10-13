@@ -13,7 +13,8 @@ const bookingSchema = z.object({
 
 class Booking {
   static collection() {
-    return getDB().collection('Booking');
+    const myDB= getDB().collection('all_books');
+    console.log(myDB);
   }
 
   static async validate(data) {
