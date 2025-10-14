@@ -6,13 +6,13 @@ const categorySchema = z.object({
   description: z.string().optional(),
   imageUrl: z.string().url('Invalid image URL').optional(),
   isActive: z.boolean().default(true),
-  createdAt: z.date().default(() => new()),
-  updatedAt: z.date().default(() => new())
+  // createdAt: z.date().default(() => new()),
+  // updatedAt: z.date().default(() => new())
 });
 
 class Category {
   static collection() {
-    return getDB().collection('Categories');
+    return getDB().collection('category');
   }
 
   static async validate(data) {
@@ -33,9 +33,8 @@ class Category {
     });
   }
 
-  static async findAll(includeInactive = false) {
-    const query = includeInactive ? {} : { isActive: true };
-    return this.collection().find(query).sort({ name: 1 }).toArray();
+   static async findAll() {
+    return this.collection().find({}).toArray();
   }
 
   static async findById(id) {

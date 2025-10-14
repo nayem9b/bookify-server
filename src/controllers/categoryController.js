@@ -33,8 +33,7 @@ const categoryController = {
   // Get all categories
   getAllCategories: async (req, res, next) => {
     try {
-      const { includeInactive } = req.query;
-      const categories = await Category.findAll(includeInactive === 'true');
+      const categories = await Category.findAll();
       res.json(categories);
     } catch (error) {
       next(error);

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
 const bookRoutes = require('./routes/bookRoutes');
-// const categoryRoutes = require('./routes/categoryRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -24,7 +24,7 @@ connectRedis().catch(console.error);
 
 // Routes
 app.use('/api/books', bookRoutes);
-// app.use('/api/categories', categoryRoutes);
+app.use('/api/categories', categoryRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/users', userRoutes);
