@@ -1,6 +1,6 @@
 const { z } = require('zod');
 const { getDB } = require('../config/db');
-
+const { ObjectId } = require("mongodb");
 const bookSchema = z.object({
   _id: z.union([z.string(), z.number()]),
   title: z.string().min(1, 'Title is required'),
@@ -22,9 +22,9 @@ class Book {
     return getDB().collection('all_books');
   }
 
-  static async validate(data) {
-    return bookSchema.safeParse(data);
-  }
+  // static async validate(data) {
+  //   return bookSchema.safeParse(data);
+  // }
 
   static async create(bookData) {
     const validation = await this.validate(bookData);
@@ -35,7 +35,8 @@ class Book {
   }
 
   static async findById(id) {
-    return this.collection().findOne({ _id: id });
+    console.log(id);
+    return this.collection().findOne({ _id: new ObjectId(id) });
   }
 
   static async findAll() {
@@ -48,13 +49,13 @@ class Book {
       throw new Error(`Validation failed: ${validation.error}`);
     }
     return this.collection().updateOne(
-      { _id: id },
+      { _id:  new ObjectId(id) },
       { $set: updateData }
     );
   }
 
   static async delete(id) {
-    return this.collection().deleteOne({ _id: id });
+    return this.collection().deleteOne({ _id: new ObjectId(id) });
   }
 }
 

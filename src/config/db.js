@@ -12,7 +12,6 @@ const connectDB = async () => {
     client = new MongoClient(uri);
     await client.connect();
     db = client.db('Bookify');
-    console.log(db);
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error);
