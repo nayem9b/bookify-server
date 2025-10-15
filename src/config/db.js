@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const uri = `${process.env.DATABASE_URI}`;
-console.log(uri)
+
 
 let client;
 let db;

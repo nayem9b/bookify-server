@@ -8,6 +8,8 @@ router.post('/register', userController.register);
 router.post('/login', userController.login);
 
 // Protected routes (require authentication)
+// GET / -> fetch all users
+router.get('/', userController.getAllUsers);
 router.get('/profile', authenticate, userController.getProfile);
 router.put('/profile', authenticate, userController.updateProfile);
 

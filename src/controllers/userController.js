@@ -5,7 +5,7 @@ const userController = {
   // Register a new user
   register: async (req, res, next) => {
     try {
-      const { email, password, name } = req.body;
+      const { name, email, role } = req.body;
       
       // Check if user already exists
       const existingUser = await User.findByEmail(email);
@@ -15,27 +15,29 @@ const userController = {
 
       // Create new user
       const newUser = await User.create({
-        email,
-        password, // In a real app, hash the password before saving
         name,
-        role: 'user'
+        email,
+        // password, // In a real app, hash the password before saving
+        role: role
       });
 
       // Generate JWT token
       const token = generateToken({ 
         userId: newUser.insertedId,
-        email,
-        role: 'user' 
+        name : name,
+        email :email,
+        role: role 
       });
 
       res.status(201).json({
         message: 'User registered successfully',
+        
         token,
         user: {
           id: newUser.insertedId,
-          email,
           name,
-          role: 'user'
+          email,
+          role: role
         }
       });
     } catch (error) {
@@ -93,6 +95,21 @@ const userController = {
       // Remove sensitive data before sending response
       const { password, ...userData } = user;
       res.json(userData);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get all users (admin-only in real apps)
+  getAllUsers: async (req, res, next) => {
+    try {
+      const users = await User.findAll();
+      // Strip passwords and any sensitive fields
+      const safeUsers = users.map(u => {
+        const { password, ...rest } = u;
+        return rest;
+      });
+      res.json(users);
     } catch (error) {
       next(error);
     }
