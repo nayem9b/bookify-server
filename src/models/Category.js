@@ -71,9 +71,9 @@ class Category {
     );
   }
 
-  static async getBooksByCategory(categoryId) {
-    return getDB().collection('CategoryBooks')
-      .find({ categories: categoryId, isActive: true })
+  static async getBooksByCategory(categoryname) {
+    return getDB().collection('all_books')
+      .find({ category: categoryname })
       .toArray();
   }
 }

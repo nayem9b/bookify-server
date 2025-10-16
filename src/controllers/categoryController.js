@@ -96,6 +96,7 @@ const categoryController = {
   getBooksByCategory: async (req, res, next) => {
     try {
       const { id } = req.params;
+      console.log(id);
       const books = await Category.getBooksByCategory(id);
       res.json(books);
     } catch (error) {

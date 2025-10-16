@@ -6,6 +6,7 @@ const userController = {
   register: async (req, res, next) => {
     try {
       const { name, email, role } = req.body;
+      console.log(name, email, role);
       
       // Check if user already exists
       const existingUser = await User.findByEmail(email);
@@ -13,7 +14,7 @@ const userController = {
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      // Create new user
+      // // Create new user
       const newUser = await User.create({
         name,
         email,
@@ -35,8 +36,8 @@ const userController = {
         token,
         user: {
           id: newUser.insertedId,
-          name,
-          email,
+          name : name,
+          email: email,
           role: role
         }
       });
@@ -109,7 +110,38 @@ const userController = {
         const { password, ...rest } = u;
         return rest;
       });
-      res.json(users);
+      res.json({ users: safeUsers });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user by email
+  getUserByEmail: async (req, res, next) => {
+    try {
+      const { email } = req.params;
+      const user = await User.findByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      const { password, ...userData } = user;
+      res.json(userData);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get user by id
+  getUserById: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      const { password, ...userData } = user;
+      res.json(userData);
     } catch (error) {
       next(error);
     }

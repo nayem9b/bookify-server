@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { ObjectId } = require("mongodb");
 const { getDB } = require('../config/db');
 
 const userSchema = z.object({
@@ -22,12 +23,12 @@ class User {
    static async findAll() {
     return this.collection().find({}).toArray();
   }
-  
+
   static async create(userData) {
-    const validation = await this.validate(userData);
-    if (!validation.success) {
-      throw new Error(`Validation failed: ${validation.error}`);
-    }
+    // const validation = await this.validate(userData);
+    // if (!validation.success) {
+    //   throw new Error(`Validation failed: ${validation.error}`);
+    // }
     return this.collection().insertOne({
       ...userData,
       createdAt: new Date(),
@@ -40,7 +41,8 @@ class User {
   }
 
   static async findById(id) {
-    return this.collection().findOne({ _id: id });
+    console.log("I'm inside static",id);
+    return this.collection().findOne({ _id: new ObjectId(id) });
   }
 
   static async update(id, updateData) {

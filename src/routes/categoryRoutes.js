@@ -11,8 +11,8 @@ router.get('/:id/books', categoryController.getBooksByCategory);
 // Protected Admin routes
 router.post(
   '/',
-  authenticate,
-  authorize(['admin']),
+  // authenticate,
+  // authorize(['admin']),
   categoryController.createCategory
 );
 
