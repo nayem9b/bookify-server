@@ -104,13 +104,19 @@ const userController = {
   // Get all users (admin-only in real apps)
   getAllUsers: async (req, res, next) => {
     try {
-      const users = await User.findAll();
+      // Support optional role filter (e.g. ?role=Seller or ?role=Buyer)
+      const { role } = req.query;
+      let users = await User.findAll();
+      if (role) {
+        users = users.filter((u) => u.role && u.role.toLowerCase() === role.toLowerCase());
+      }
       // Strip passwords and any sensitive fields
-      const safeUsers = users.map(u => {
+      const safeUsers = users.map((u) => {
         const { password, ...rest } = u;
         return rest;
       });
-      res.json({ users: safeUsers });
+      // Return as plain array for compatibility with frontend
+      res.json(safeUsers);
     } catch (error) {
       next(error);
     }
@@ -131,6 +137,39 @@ const userController = {
     }
   },
 
+  // Role check endpoints
+  isAdmin: async (req, res, next) => {
+    try {
+      const { email } = req.params;
+      const user = await User.findByEmail(email);
+      return res.json({ isAdmin: user?.role?.toString().toLowerCase() === 'admin' });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  isBuyer: async (req, res, next) => {
+    try {
+      const { email } = req.params;
+      const user = await User.findByEmail(email);
+      // Accept 'buyer' or generic 'user' as buyer role depending on DB conventions
+      const role = user?.role?.toString().toLowerCase();
+      return res.json({ isBuyer: role === 'buyer' || role === 'user' });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  isSeller: async (req, res, next) => {
+    try {
+      const { email } = req.params;
+      const user = await User.findByEmail(email);
+      return res.json({ isSeller: user?.role?.toString().toLowerCase() === 'seller' });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Get user by id
   getUserById: async (req, res, next) => {
     try {
@@ -142,6 +181,42 @@ const userController = {
       }
       const { password, ...userData } = user;
       res.json(userData);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Update a user by id (admin action)
+  updateUserById: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+
+      // Convert id to ObjectId where needed; User.update expects id as-is
+      const result = await User.collection().updateOne(
+        { _id: new (require('mongodb').ObjectId)(id) },
+        { $set: { ...updateData, updatedAt: new Date() } }
+      );
+
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json({ message: 'User updated', modifiedCount: result.modifiedCount });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Delete a user by id (admin action)
+  deleteUserById: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const result = await User.collection().deleteOne({ _id: new (require('mongodb').ObjectId)(id) });
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.json({ message: 'User deleted' });
     } catch (error) {
       next(error);
     }
