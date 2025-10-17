@@ -7,6 +7,7 @@ const userSchema = z.object({
   email: z.string().email('Invalid email address'),
   // password: z.string().min(6, 'Password must be at least 6 characters'),
   role: z.enum(['user', 'admin', 'seller']).default('user'),
+  suspendedUntil: z.date().optional(),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date())
 });
@@ -31,6 +32,7 @@ class User {
     // }
     return this.collection().insertOne({
       ...userData,
+      suspendedUntil: userData.suspendedUntil || null,
       createdAt: new Date(),
       updatedAt: new Date()
     });

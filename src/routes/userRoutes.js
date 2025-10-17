@@ -24,5 +24,8 @@ router.put('/profile', authenticate, userController.updateProfile);
 // Admin actions: update or delete user by id
 router.put('/:id', authenticate, userController.updateUserById);
 router.delete('/:id', authenticate, userController.deleteUserById);
+// Suspend/Unsuspend seller (admin)
+router.put('/suspend/:id', authenticate, userController.suspendSeller);
+router.put('/unsuspend/:id', authenticate, userController.unsuspendSeller);
 
 module.exports = router;

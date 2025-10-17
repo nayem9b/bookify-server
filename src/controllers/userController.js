@@ -1,44 +1,50 @@
 const User = require('../models/User');
 const { generateToken } = require('../utils/auth');
+const bcrypt = require('bcrypt');
 
 const userController = {
   // Register a new user
   register: async (req, res, next) => {
     try {
-      const { name, email, role } = req.body;
-      console.log(name, email, role);
-      
+      const { name, email, role, password } = req.body;
+      if (!password || password.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+      }
+
       // Check if user already exists
       const existingUser = await User.findByEmail(email);
       if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      // // Create new user
+      // Hash password
+      const saltRounds = 10;
+      const hashed = await bcrypt.hash(password, saltRounds);
+
+      // Create new user
       const newUser = await User.create({
         name,
         email,
-        // password, // In a real app, hash the password before saving
+        password: hashed,
         role: role
       });
 
-      // Generate JWT token
+      // Generate JWT token (do not include password)
       const token = generateToken({ 
         userId: newUser.insertedId,
-        name : name,
-        email :email,
-        role: role 
+        name,
+        email,
+        role
       });
 
       res.status(201).json({
         message: 'User registered successfully',
-        
         token,
         user: {
           id: newUser.insertedId,
-          name : name,
-          email: email,
-          role: role
+          name,
+          email,
+          role
         }
       });
     } catch (error) {
@@ -50,15 +56,15 @@ const userController = {
   login: async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      
+
       // Find user by email
       const user = await User.findByEmail(email);
       if (!user) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      // Verify password (in a real app, use bcrypt.compare)
-      const isPasswordValid = user.password === password;
+      // Verify password using bcrypt
+      const isPasswordValid = await bcrypt.compare(password, user.password || '');
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
@@ -164,7 +170,10 @@ const userController = {
     try {
       const { email } = req.params;
       const user = await User.findByEmail(email);
-      return res.json({ isSeller: user?.role?.toString().toLowerCase() === 'seller' });
+      const isSeller = user?.role?.toString().toLowerCase() === 'seller';
+      const suspendedUntil = user?.suspendedUntil ? new Date(user.suspendedUntil) : null;
+      const isSuspended = suspendedUntil ? suspendedUntil > new Date() : false;
+      return res.json({ isSeller, isSuspended, suspendedUntil });
     } catch (error) {
       next(error);
     }
@@ -203,6 +212,38 @@ const userController = {
       }
 
       res.json({ message: 'User updated', modifiedCount: result.modifiedCount });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Suspend a seller for given duration (default 14 days)
+  suspendSeller: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const days = parseInt(req.body.days, 10) || 14;
+      const until = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+      const result = await User.collection().updateOne(
+        { _id: new (require('mongodb').ObjectId)(id) },
+        { $set: { suspendedUntil: until, updatedAt: new Date() } }
+      );
+      if (result.matchedCount === 0) return res.status(404).json({ message: 'User not found' });
+      res.json({ message: `Seller suspended until ${until.toISOString()}`, suspendedUntil: until });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Unsuspend a seller (clear suspension)
+  unsuspendSeller: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const result = await User.collection().updateOne(
+        { _id: new (require('mongodb').ObjectId)(id) },
+        { $unset: { suspendedUntil: "" }, $set: { updatedAt: new Date() } }
+      );
+      if (result.matchedCount === 0) return res.status(404).json({ message: 'User not found' });
+      res.json({ message: 'Seller unsuspended' });
     } catch (error) {
       next(error);
     }
