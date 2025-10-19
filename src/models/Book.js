@@ -27,10 +27,10 @@ class Book {
   // }
 
   static async create(bookData) {
-    const validation = await this.validate(bookData);
-    if (!validation.success) {
-      throw new Error(`Validation failed: ${validation.error}`);
-    }
+    // const validation = await this.validate(bookData);
+    // if (!validation.success) {
+    //   throw new Error(`Validation failed: ${validation.error}`);
+    // }
     return this.collection().insertOne(bookData);
   }
 

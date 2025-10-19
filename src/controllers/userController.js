@@ -281,6 +281,30 @@ const userController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  // Update user wishlist
+  updateUserWishlist: async (req, res) => {
+    const { id } = req.params;
+    const { wishlist } = req.body;
+
+    if (!Array.isArray(wishlist) || !wishlist.every(item => typeof item === 'object' && item !== null)) {
+      return res.status(400).json({ message: 'Wishlist must be an array of objects' });
+    }
+
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      user.wishlist = wishlist;
+      await user.save();
+
+      res.status(200).json({ message: 'Wishlist updated successfully', wishlist: user.wishlist });
+    } catch (error) {
+      res.status(500).json({ message: 'Error updating wishlist', error: error.message });
+    }
   }
 };
 
