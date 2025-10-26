@@ -28,5 +28,6 @@ router.delete('/:id', userController.deleteUserById);
 router.put('/suspend/:id', authenticate, userController.suspendSeller);
 router.put('/unsuspend/:id', authenticate, userController.unsuspendSeller);
 router.patch('/:id/wishlist', userController.updateUserWishlist);
+router.get('/:id/wishlist', userController.getUserWishlist);
 
 module.exports = router;

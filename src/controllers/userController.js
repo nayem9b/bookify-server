@@ -195,6 +195,31 @@ const userController = {
     }
   },
 
+  // Get user's wishlist
+  getUserWishlist: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+
+      // Normalize wishlist to an array before returning
+      let wishlist = [];
+      if (Array.isArray(user.wishlist)) wishlist = user.wishlist;
+      else if (typeof user.wishlist === 'string') {
+        try {
+          const parsed = JSON.parse(user.wishlist);
+          if (Array.isArray(parsed)) wishlist = parsed;
+        } catch (e) {
+          wishlist = [];
+        }
+      }
+
+      return res.json({ wishlist });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Update a user by id (admin action)
   updateUserById: async (req, res, next) => {
     try {
