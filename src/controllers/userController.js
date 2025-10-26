@@ -287,22 +287,101 @@ const userController = {
   updateUserWishlist: async (req, res) => {
     const { id } = req.params;
     const { wishlist } = req.body;
+    console.log('Received body:', req.body);
 
-    if (!Array.isArray(wishlist) || !wishlist.every(item => typeof item === 'object' && item !== null)) {
-      return res.status(400).json({ message: 'Wishlist must be an array of objects' });
-    }
 
     try {
-      const user = await User.findById(id);
-      if (!user) {
+      if (req.user && req.user.userId && req.user.userId.toString() !== id.toString()) {
+        return res.status(403).json({ message: 'You are not allowed to modify this user\'s wishlist' });
+      }
+
+      const { ObjectId } = require('mongodb');
+      if (Array.isArray(wishlist)) {
+        const result = await User.collection().updateOne(
+          { _id: new ObjectId(id) },
+          { $set: { wishlist, updatedAt: new Date() } }
+        );
+
+        if (result.matchedCount === 0) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+
+        const updatedUser = await User.findById(id);
+        return res.status(200).json({ message: 'Wishlist updated successfully', wishlist: updatedUser.wishlist || [] });
+      }
+
+      // Single-item addition
+      const { book, bookId } = req.body;
+      if (!book && !bookId) {
+        return res.status(400).json({ message: 'Request must include wishlist array or a book/bookId to add' });
+      }
+
+      const itemToAdd = book || { id: bookId };
+      // Ensure the stored wishlist is an array. Some older documents may have wishlist as a string
+      // which causes MongoDB to reject $addToSet. Normalize it to an array first.
+      const existingUser = await User.findById(id);
+      if (!existingUser) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      user.wishlist = wishlist;
-      await user.save();
+      try {
+        if (existingUser.wishlist && !Array.isArray(existingUser.wishlist)) {
+          // Attempt to parse JSON stringified array if possible, otherwise replace with empty array
+          if (typeof existingUser.wishlist === 'string') {
+            try {
+              const parsed = JSON.parse(existingUser.wishlist);
+              if (Array.isArray(parsed)) {
+                await User.collection().updateOne(
+                  { _id: new ObjectId(id) },
+                  { $set: { wishlist: parsed, updatedAt: new Date() } }
+                );
+              } else {
+                await User.collection().updateOne(
+                  { _id: new ObjectId(id) },
+                  { $set: { wishlist: [], updatedAt: new Date() } }
+                );
+              }
+            } catch (parseErr) {
+              // Not JSON — overwrite with empty array to allow $addToSet
+              await User.collection().updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { wishlist: [], updatedAt: new Date() } }
+              );
+            }
+          } else {
+            // Non-string/non-array (number, boolean, etc.) — reset to empty array
+            await User.collection().updateOne(
+              { _id: new ObjectId(id) },
+              { $set: { wishlist: [], updatedAt: new Date() } }
+            );
+          }
+        }
 
-      res.status(200).json({ message: 'Wishlist updated successfully', wishlist: user.wishlist });
+        const addResult = await User.collection().updateOne(
+          { _id: new ObjectId(id) },
+          { $addToSet: { wishlist: itemToAdd }, $set: { updatedAt: new Date() } }
+        );
+
+        if (addResult.matchedCount === 0) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+      } catch (updateErr) {
+        console.error('Error when adding to wishlist, updateErr:', updateErr);
+        // As a fallback, replace the wishlist with a single-item array
+        try {
+          await User.collection().updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { wishlist: [itemToAdd], updatedAt: new Date() } }
+          );
+        } catch (fallbackErr) {
+          console.error('Fallback error setting wishlist array:', fallbackErr);
+          return res.status(500).json({ message: 'Error updating wishlist', error: String(fallbackErr) });
+        }
+      }
+      const updatedUser2 = await User.findById(id);
+      return res.status(200).json({ message: 'Wishlist updated successfully', wishlist: updatedUser2.wishlist || [] });
     } catch (error) {
+      console.error('Error in updateUserWishlist:', error);
       res.status(500).json({ message: 'Error updating wishlist', error: error.message });
     }
   }

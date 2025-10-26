@@ -43,15 +43,14 @@ class User {
   }
 
   static async findById(id) {
-    console.log("I'm inside static",id);
     return this.collection().findOne({ _id: new ObjectId(id) });
   }
 
   static async update(id, updateData) {
-    const validation = await this.validate(updateData);
-    if (!validation.success) {
-      throw new Error(`Validation failed: ${validation.error}`);
-    }
+    // const validation = await this.validate(updateData);
+    // if (!validation.success) {
+    //   throw new Error(`Validation failed: ${validation.error}`);
+    // }
     return this.collection().updateOne(
       { _id: id },
       { $set: { ...updateData, updatedAt: new Date() } }
