@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 // const productRoutes = require('./routes/productRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const { connectRedis } = require('./utils/redis');
+const { initKafka } = require('./messaging/kafka');
 
 const app = express();
 require('dotenv').config();
@@ -36,10 +37,23 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
+
+const main = async () =>{
+ //init kafka 
+ try {
+  await initKafka();
+  console.log('Kafka initialized successfully');
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+ } 
+ catch (error) {
+  console.error('Kafka initialization error:', error);
+ }
+}
+
+ main();
 app.get('/', (req, res) => {
   res.send('Hello Bookify!');
 });
