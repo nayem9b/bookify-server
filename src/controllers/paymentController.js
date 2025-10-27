@@ -4,7 +4,8 @@ const express = require("express");
 async function createPayment(req, res, next) {
   try {
     const payment = req.body.payment || req.body; // accept { payment: {...} } or raw body
-    const user = req.body.user || req.user || null;
+    // ensure user is an object (don't pass null into publisher; defaults will apply)
+    const user = req.body.user || req.user || {};
 
     // Dynamically import publisher (supports mixed module systems)
     const publisherModule = await import(
@@ -35,12 +36,10 @@ async function createPayment(req, res, next) {
       .json({ message: "Payment event published", payment: payload });
   } catch (error) {
     console.error("Error in createPayment:", error);
-    return res
-      .status(500)
-      .json({
-        message: "Failed to publish payment event",
-        error: String(error),
-      });
+    return res.status(500).json({
+      message: "Failed to publish payment event",
+      error: String(error),
+    });
   }
 }
 

@@ -1,4 +1,4 @@
-import { getKafkaProducer } from "../kafka";
+import { getKafkaProducer } from "../kafka.js";
 
 /**
  * Publish a payment/checkout event to Kafka.
@@ -12,6 +12,8 @@ export async function publishPaymentEvent(
   user = {},
   topic = "bookify.payments"
 ) {
+  const safeUser = user || {};
+
   const payload = {
     event: "payment.created",
     timestamp: new Date().toISOString(),
@@ -23,9 +25,9 @@ export async function publishPaymentEvent(
       metadata: payment.metadata || {},
     },
     user: {
-      id: user.id || user._id || user.uid || null,
-      name: user.name || user.displayName || null,
-      email: user.email || null,
+      id: safeUser.id || safeUser._id || safeUser.uid || null,
+      name: safeUser.name || safeUser.displayName || null,
+      email: safeUser.email || null,
     },
   };
 
@@ -38,4 +40,6 @@ export async function publishPaymentEvent(
   });
 
   console.log(`📤 Published payment event (key=${key}) to topic=${topic}`);
+  console.log(topic);
+  console.log(payload);
 }
