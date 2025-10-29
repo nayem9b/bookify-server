@@ -6,7 +6,7 @@ const userController = {
   // Register a new user
   register: async (req, res, next) => {
     try {
-      const { name, email, role, password } = req.body;
+      const { name, email, role, password, guid } = req.body;
       if (!password || password.length < 6) {
         return res
           .status(400)
@@ -29,6 +29,7 @@ const userController = {
         email,
         password: hashed,
         role: role,
+        guid: guid,
       });
 
       // Generate JWT token (do not include password)
@@ -37,6 +38,7 @@ const userController = {
         name,
         email,
         role,
+        guid,
       });
 
       res.status(201).json({
@@ -47,6 +49,7 @@ const userController = {
           name,
           email,
           role,
+          guid,
         },
       });
     } catch (error) {
