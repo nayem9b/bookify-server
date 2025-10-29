@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: bookify-client
-        image: nayem9b/bookify-client-github-build:1.0.1
+        image: nayem9b/bookify-client-github-build:1.0.2
         # volumeMounts:
         #   - name: config-volume
         #     mountPath: /opt/config
