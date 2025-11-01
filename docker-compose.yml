@@ -1,0 +1,28 @@
+# docker-compose.yml
+version: '3'
+services:
+  jenkins:
+    image: sheba-jenkins-full-cicd
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - cicd-net
+  sonarqube:
+    image: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - cicd-net
+
+volumes:
+  jenkins-home:
+
+networks:
+  cicd-net:
+    external: true
+
+# SonarPass: Trapqueen7@#
