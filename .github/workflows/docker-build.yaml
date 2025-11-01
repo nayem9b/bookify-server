@@ -39,6 +39,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+           fetch-depth: 0
+           args: detect --redact --report-format=sarif --report-path=results.sarif --exit-code=1
 
       - name: Setup Gitleaks
         uses: gitleaks/gitleaks-action@v2
