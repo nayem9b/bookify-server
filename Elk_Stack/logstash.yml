@@ -1,0 +1,10 @@
+## Minimal Logstash settings for local dev
+# Enable xpack monitoring and provide credentials so licensechecker uses auth'd requests.
+# This prevents repeated 401s from unauthenticated health/license checks.
+xpack.monitoring.enabled: true
+
+xpack.monitoring.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "${ELASTIC_USERNAME}"
+  password: "${ELASTIC_PASSWORD}"
+# If you prefer not to enable monitoring, set `xpack.monitoring.enabled: false` instead.

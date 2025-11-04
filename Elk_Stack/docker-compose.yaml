@@ -38,10 +38,13 @@ services:
       - "9600:9600"
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash.yml:/usr/share/logstash/config/logstash.yml:ro
     environment:
       - LS_JAVA_OPTS=-Xms256m -Xmx256m
       # Pass the Elasticsearch bootstrap password into Logstash so the pipeline can authenticate
       - ELASTIC_PASSWORD=changeme
+      # Use the dedicated logstash writer user we created
+      - ELASTIC_USERNAME=logstash_writer
     networks:
       - logs-pipeline
     depends_on:
@@ -70,6 +73,13 @@ services:
 
   # elastic
   # changeme
+
+#   cd /home/nayems/Desktop/Bookify/server/Elk_Stack && \
+# curl -u elastic:changeme -sS -X PUT "http://localhost:9200/_security/role/logstash_writer_role" -H "Content-Type: application/json" -d '{"cluster":["monitor","manage_index_templates","manage"],"indices":[{"names":["*"],"privileges":["write","create_index","manage","monitor"]}]}' && \
+# # show role
+# curl -u elastic:changeme -sS "http://localhost:9200/_security/role/logstash_writer_role?pretty" && \
+# # restart logstash and tail logs
+# docker compose restart logstash && sleep 3 && docker compose logs --no-color --since 1m logstash | sed -n '1,240p'
 
   nginx:
     image: nginx:latest
