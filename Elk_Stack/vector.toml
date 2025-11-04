@@ -1,0 +1,25 @@
+[sources.docker_logs]
+type = "docker_logs"
+include_containers = ["*nginx*", "elk_stack-nginx-1"]
+docker_host = "unix:///var/run/docker.sock"
+
+[transforms.parse_docker]
+type = "remap"
+inputs = ["docker_logs"]
+source = '''
+. = parse_json!(.message)
+.timestamp = to_unix_timestamp(now())
+.container_name = .container_name
+'''
+
+[sinks.logstash]
+type = "socket"
+inputs = ["parse_docker"]
+address = "logstash:5044"
+mode = "tcp"
+encoding.codec = "json"
+
+[sinks.console]
+type = "console"
+inputs = ["parse_docker"]
+encoding.codec = "json"

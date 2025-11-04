@@ -1,0 +1,27 @@
+services:
+  vector:
+    volumes:
+      - ./vector.toml:/etc/vector/vector.toml
+    command: ["--config", "etc/vector/vector.toml", "--verbose"]
+    depends_on:
+      - logstash
+    networks:
+      - logs-pipeline
+  elasticsearch:
+    image: elasticsearch:8.17.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+    networks:
+      - logs-pipeline
+  logstash:
+    image: logstash:8.17.0
+    ports:
+      - "5444:5044"
+      - "9600:9600"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - LS_JAVA_OPTS=-Xms1g -Xmx1g
