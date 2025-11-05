@@ -24,16 +24,16 @@ class Category {
     if (!validation.success) {
       throw new Error(`Validation failed: ${validation.error}`);
     }
-    
+
     const now = new Date();
     return this.collection().insertOne({
       ...categoryData,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     });
   }
 
-   static async findAll() {
+  static async findAll() {
     return this.collection().find({}).toArray();
   }
 
@@ -49,11 +49,11 @@ class Category {
 
     return this.collection().updateOne(
       { _id: id },
-      { 
-        $set: { 
+      {
+        $set: {
           ...updateData,
-          updatedAt: new Date() 
-        } 
+          updatedAt: new Date(),
+        },
       }
     );
   }
@@ -62,17 +62,18 @@ class Category {
     // Soft delete by setting isActive to false
     return this.collection().updateOne(
       { _id: id },
-      { 
-        $set: { 
+      {
+        $set: {
           isActive: false,
-          updatedAt: new Date() 
-        } 
+          updatedAt: new Date(),
+        },
       }
     );
   }
 
   static async getBooksByCategory(categoryname) {
-    return getDB().collection('all_books')
+    return getDB()
+      .collection('all_books')
       .find({ category: categoryname })
       .toArray();
   }

@@ -4,7 +4,7 @@
 xpack.monitoring.enabled: true
 
 xpack.monitoring.elasticsearch:
-  hosts: ["http://elasticsearch:9200"]
-  username: "${ELASTIC_USERNAME}"
-  password: "${ELASTIC_PASSWORD}"
+  hosts: ['http://elasticsearch:9200']
+  username: '${ELASTIC_USERNAME}'
+  password: '${ELASTIC_PASSWORD}'
 # If you prefer not to enable monitoring, set `xpack.monitoring.enabled: false` instead.

@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,8 +14,8 @@ spec:
     namespace: bookify
     spec:
       containers:
-      - name: bookify-payment
-        image: nayem9b/bookify-payment-fastapi-github-build:latest 
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8000
+        - name: bookify-payment
+          image: nayem9b/bookify-payment-fastapi-github-build:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000

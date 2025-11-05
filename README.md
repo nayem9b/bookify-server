@@ -17,7 +17,7 @@ Bookify is a comprehensive online book marketplace platform that connects buyers
 - [Development](#-development)
 - [Troubleshooting](#-troubleshooting)
 
-##  Features
+## Features
 
 - **User Management**: Registration, authentication, and role-based access (Buyers/Sellers/Admins)
 - **Book Management**: Add, edit, delete, and browse books with categorization
@@ -30,23 +30,23 @@ Bookify is a comprehensive online book marketplace platform that connects buyers
 - **Caching**: Redis integration for performance optimization
 - **Database**: MongoDB with connection pooling and optimization
 
-##  Architecture
+## Architecture
 
 The Bookify server follows a microservice-inspired architecture with:
 
 ```
-Client Applications (Web/Mobile) 
+Client Applications (Web/Mobile)
     ↓ HTTP/REST API
-Bookify Server (Node.js/Express) 
+Bookify Server (Node.js/Express)
     ↓ Internal Services
 └── Database Layer (MongoDB)
-└── Cache Layer (Redis) 
+└── Cache Layer (Redis)
 └── Message Broker (Redpanda/Kafka)
     ↓ Event Processing
 └── GraphQL Service (Consumer)
 ```
 
-##  Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js v24.x
 - **Framework**: Express.js
@@ -58,7 +58,7 @@ Bookify Server (Node.js/Express)
 - **Language**: JavaScript/TypeScript
 - **Package Manager**: Yarn
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -71,17 +71,20 @@ Bookify Server (Node.js/Express)
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd Bookify/server
 ```
 
 2. Install dependencies:
+
 ```bash
 yarn install
 ```
 
 3. Create environment file:
+
 ```bash
 cp .env.example .env
 ```
@@ -89,11 +92,12 @@ cp .env.example .env
 4. Configure environment variables (see [Environment Variables](#-environment-variables) section)
 
 5. Start the development server:
+
 ```bash
 yarn dev
 ```
 
-##  Docker Setup
+## Docker Setup
 
 The application is configured with a multi-stage Docker build process for optimized production deployment.
 
@@ -122,12 +126,13 @@ docker-compose -f docker-compose.kafka.yml down
 ### Container Environment
 
 The Docker image includes:
+
 - Multi-stage build (builder, pruner, runner)
 - Production-optimized dependency installation
 - Health checks
 - Security best practices (non-root user)
 
-##  Kubernetes Deployment
+## Kubernetes Deployment
 
 The project includes Kubernetes configuration files in the `k8s/` directory for production deployment.
 
@@ -150,7 +155,7 @@ kubectl apply -f k8s/
 - Network Policies for security
 - Health checks and resource limits
 
-##  Redpanda Kafka Integration
+## Redpanda Kafka Integration
 
 The Bookify server uses Redpanda (a Kafka-compatible message broker) for event streaming and real-time communication between services.
 
@@ -174,9 +179,10 @@ docker exec -it redpanda-bookify rpk cluster info
 
 The application automatically connects to Kafka on startup and handles event publishing and consumption.
 
-##  API Endpoints
+## API Endpoints
 
 ### User Management
+
 - `POST /api/users/register` - Register new user
 - `POST /api/users/login` - User login
 - `GET /api/users` - Get all users
@@ -187,6 +193,7 @@ The application automatically connects to Kafka on startup and handles event pub
 - `GET /api/users/buyers` - Get all buyers
 
 ### Book Management
+
 - `GET /api/books` - Get all books
 - `GET /api/books/:id` - Get specific book
 - `POST /api/books` - Add new book
@@ -195,21 +202,25 @@ The application automatically connects to Kafka on startup and handles event pub
 - `GET /api/books/category/:category` - Get books by category
 
 ### Categories
+
 - `GET /api/categories` - Get all categories
 - `GET /api/categories/:category` - Get books in specific category
 
 ### Booking System
+
 - `POST /api/bookings` - Create new booking
 - `GET /api/bookings` - Get all bookings
 - `GET /api/bookings/:id` - Get specific booking
 - `DELETE /api/bookings/:id` - Cancel booking
 
 ### Wishlist
+
 - `POST /api/wishlist` - Add to wishlist
 - `GET /api/wishlist` - Get wishlist items
 - `DELETE /api/wishlist/:id` - Remove from wishlist
 
 ### Payment
+
 - `POST /api/payments` - Process payment
 - `GET /api/payments/:id` - Get payment status
 
@@ -276,7 +287,7 @@ server/
 └── README.md                  # This file
 ```
 
-##  Development
+## Development
 
 ### Running in Development Mode
 
@@ -326,26 +337,30 @@ yarn test:watch
 yarn test:coverage
 ```
 
-##  Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
 **Kafka Connection Issues:**
+
 - Ensure Redpanda is running: `docker ps | grep redpanda`
 - Check broker connectivity: `telnet localhost 29092`
 - Verify environment variables are set correctly
 
 **Database Connection Issues:**
+
 - Verify MongoDB connection string is correct
 - Check network connectivity to MongoDB Atlas
 - Ensure credentials have proper permissions
 
 **Redis Connection Issues:**
+
 - Ensure Redis server is running
 - Check Redis host and port configuration
 - Verify Redis password if authentication is enabled
 
 **Docker Build Issues:**
+
 - Ensure Docker is running and properly configured
 - Check Dockerfile syntax
 - Verify multi-stage build dependencies
@@ -367,11 +382,12 @@ The application includes comprehensive logging:
 - Error tracking and reporting
 - Performance monitoring hooks
 
-##  Scaling
+## Scaling
 
 ### Horizontal Scaling
 
 The application is designed for horizontal scaling:
+
 - Stateless design allows multiple instances
 - Database connection pooling
 - Redis for session storage and caching
@@ -385,7 +401,7 @@ The application is designed for horizontal scaling:
 - Proper indexing in MongoDB
 - Efficient API endpoint design
 
-##  Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -393,11 +409,11 @@ The application is designed for horizontal scaling:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-##  License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-##  Support
+## Support
 
 If you encounter any issues or have questions:
 

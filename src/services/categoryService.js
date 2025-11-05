@@ -63,8 +63,8 @@
 //         return { success: false, error: 'Category not found', status: 404 };
 //       }
 //       const updatedCategory = await Category.findById(id);
-//       return { 
-//         success: true, 
+//       return {
+//         success: true,
 //         data: updatedCategory,
 //         message: `Category ${isActive ? 'activated' : 'deactivated'} successfully`
 //       };

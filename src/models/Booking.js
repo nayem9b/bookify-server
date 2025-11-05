@@ -6,14 +6,16 @@ const bookingSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
   bookingDate: z.date().default(() => new Date()),
   returnDate: z.date(),
-  status: z.enum(['pending', 'approved', 'rejected', 'returned']).default('pending'),
+  status: z
+    .enum(['pending', 'approved', 'rejected', 'returned'])
+    .default('pending'),
   createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date().default(() => new Date())
+  updatedAt: z.date().default(() => new Date()),
 });
 
 class Booking {
   static collection() {
-    const myDB= getDB().collection('all_books');
+    const myDB = getDB().collection('all_books');
     console.log(myDB);
   }
 
@@ -29,7 +31,7 @@ class Booking {
     return this.collection().insertOne({
       ...bookingData,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
   }
 
@@ -44,11 +46,11 @@ class Booking {
   static async updateStatus(id, status) {
     return this.collection().updateOne(
       { _id: id },
-      { 
-        $set: { 
+      {
+        $set: {
           status,
-          updatedAt: new Date() 
-        } 
+          updatedAt: new Date(),
+        },
       }
     );
   }

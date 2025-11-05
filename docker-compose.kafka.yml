@@ -29,20 +29,19 @@ services:
       - dev-container
       - --default-log-level=info
     ports:
-      - "18081:18081"
-      - "18082:18082"
-      - "29092:29092"
-      - "19644:9644"
+      - '18081:18081'
+      - '18082:18082'
+      - '29092:29092'
+      - '19644:9644'
     environment:
       - REDPANDA_AUTO_CREATE_TOPICS_ENABLED=true
     volumes:
       - redpanda-data:/var/lib/redpanda/data
     healthcheck:
-      test: ["CMD", "rpk", "cluster", "health"]
+      test: ['CMD', 'rpk', 'cluster', 'health']
       interval: 10s
       timeout: 5s
       retries: 5
-
 
 volumes:
   redpanda-data:

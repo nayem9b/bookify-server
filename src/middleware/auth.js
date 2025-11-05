@@ -42,5 +42,5 @@ module.exports = {
   authenticate,
   authorize,
   isAdmin: authorize(['admin']),
-  isSeller: authorize(['seller', 'admin'])
+  isSeller: authorize(['seller', 'admin']),
 };

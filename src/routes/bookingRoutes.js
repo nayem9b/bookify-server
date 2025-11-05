@@ -9,6 +9,11 @@ router.get('/my-bookings', authenticate, bookingController.getUserBookings);
 
 // Admin routes
 router.get('/', bookingController.getAllBookings);
-router.put('/:id/status', authenticate, authorize(['admin']), bookingController.updateBookingStatus);
+router.put(
+  '/:id/status',
+  authenticate,
+  authorize(['admin']),
+  bookingController.updateBookingStatus
+);
 
 module.exports = router;

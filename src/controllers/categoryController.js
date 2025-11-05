@@ -5,12 +5,12 @@ const categoryController = {
   createCategory: async (req, res, next) => {
     try {
       const { name, description, imageUrl } = req.body;
-      
+
       const newCategory = await Category.create({
         name,
         description,
         imageUrl,
-        isActive: true
+        isActive: true,
       });
 
       res.status(201).json({
@@ -19,12 +19,14 @@ const categoryController = {
           id: newCategory.insertedId,
           name,
           description,
-          imageUrl
-        }
+          imageUrl,
+        },
       });
     } catch (error) {
       if (error.message.includes('duplicate key')) {
-        return res.status(400).json({ message: 'Category with this name already exists' });
+        return res
+          .status(400)
+          .json({ message: 'Category with this name already exists' });
       }
       next(error);
     }
@@ -63,7 +65,7 @@ const categoryController = {
         name,
         description,
         imageUrl,
-        isActive
+        isActive,
       });
 
       if (!updatedCategory.matchedCount) {
@@ -81,7 +83,7 @@ const categoryController = {
     try {
       const { id } = req.params;
       const result = await Category.delete(id);
-      
+
       if (!result.matchedCount) {
         return res.status(404).json({ message: 'Category not found' });
       }
@@ -102,7 +104,7 @@ const categoryController = {
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 module.exports = categoryController;

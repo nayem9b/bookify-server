@@ -1,5 +1,5 @@
 redpanda:
-  brokers: ["redpanda:9092"]
+  brokers: ['redpanda:9092']
   adminApi:
     enabled: true
     tls:

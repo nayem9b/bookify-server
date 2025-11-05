@@ -1,6 +1,6 @@
-const User = require("../models/User");
-const { generateToken } = require("../utils/auth");
-const bcrypt = require("bcrypt");
+const User = require('../models/User');
+const { generateToken } = require('../utils/auth');
+const bcrypt = require('bcrypt');
 
 const userController = {
   // Register a new user
@@ -10,13 +10,13 @@ const userController = {
       if (!password || password.length < 6) {
         return res
           .status(400)
-          .json({ message: "Password must be at least 6 characters" });
+          .json({ message: 'Password must be at least 6 characters' });
       }
 
       // Check if user already exists
       const existingUser = await User.findByEmail(email);
       if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(400).json({ message: 'User already exists' });
       }
 
       // Hash password
@@ -42,7 +42,7 @@ const userController = {
       });
 
       res.status(201).json({
-        message: "User registered successfully",
+        message: 'User registered successfully',
         token,
         user: {
           id: newUser.insertedId,
@@ -65,16 +65,16 @@ const userController = {
       // Find user by email
       const user = await User.findByEmail(email);
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: 'Invalid credentials' });
       }
 
       // Verify password using bcrypt
       const isPasswordValid = await bcrypt.compare(
         password,
-        user.password || ""
+        user.password || ''
       );
       if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: 'Invalid credentials' });
       }
 
       // Generate JWT token
@@ -85,7 +85,7 @@ const userController = {
       });
 
       res.json({
-        message: "Login successful",
+        message: 'Login successful',
         token,
         user: {
           id: user._id,
@@ -144,7 +144,7 @@ const userController = {
       const { email } = req.params;
       const user = await User.findByEmail(email);
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
       const { password, ...userData } = user;
       res.json(userData);
@@ -159,7 +159,7 @@ const userController = {
       const { email } = req.params;
       const user = await User.findByEmail(email);
       return res.json({
-        isAdmin: user?.role?.toString().toLowerCase() === "admin",
+        isAdmin: user?.role?.toString().toLowerCase() === 'admin',
       });
     } catch (error) {
       next(error);
@@ -172,7 +172,7 @@ const userController = {
       const user = await User.findByEmail(email);
       // Accept 'buyer' or generic 'user' as buyer role depending on DB conventions
       const role = user?.role?.toString().toLowerCase();
-      return res.json({ isBuyer: role === "buyer" || role === "user" });
+      return res.json({ isBuyer: role === 'buyer' || role === 'user' });
     } catch (error) {
       next(error);
     }
@@ -182,7 +182,7 @@ const userController = {
     try {
       const { email } = req.params;
       const user = await User.findByEmail(email);
-      const isSeller = user?.role?.toString().toLowerCase() === "seller";
+      const isSeller = user?.role?.toString().toLowerCase() === 'seller';
       const suspendedUntil = user?.suspendedUntil
         ? new Date(user.suspendedUntil)
         : null;
@@ -200,7 +200,7 @@ const userController = {
 
       const user = await User.findById(id);
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
       const { password, ...userData } = user;
       res.json(userData);
@@ -214,12 +214,12 @@ const userController = {
     try {
       const { id } = req.params;
       const user = await User.findById(id);
-      if (!user) return res.status(404).json({ message: "User not found" });
+      if (!user) return res.status(404).json({ message: 'User not found' });
 
       // Normalize wishlist to an array before returning
       let wishlist = [];
       if (Array.isArray(user.wishlist)) wishlist = user.wishlist;
-      else if (typeof user.wishlist === "string") {
+      else if (typeof user.wishlist === 'string') {
         try {
           const parsed = JSON.parse(user.wishlist);
           if (Array.isArray(parsed)) wishlist = parsed;
@@ -242,16 +242,16 @@ const userController = {
 
       // Convert id to ObjectId where needed; User.update expects id as-is
       const result = await User.collection().updateOne(
-        { _id: new (require("mongodb").ObjectId)(id) },
+        { _id: new (require('mongodb').ObjectId)(id) },
         { $set: { ...updateData, updatedAt: new Date() } }
       );
 
       if (result.matchedCount === 0) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
 
       res.json({
-        message: "User updated",
+        message: 'User updated',
         modifiedCount: result.modifiedCount,
       });
     } catch (error) {
@@ -266,11 +266,11 @@ const userController = {
       const days = parseInt(req.body.days, 10) || 14;
       const until = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
       const result = await User.collection().updateOne(
-        { _id: new (require("mongodb").ObjectId)(id) },
+        { _id: new (require('mongodb').ObjectId)(id) },
         { $set: { suspendedUntil: until, updatedAt: new Date() } }
       );
       if (result.matchedCount === 0)
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       res.json({
         message: `Seller suspended until ${until.toISOString()}`,
         suspendedUntil: until,
@@ -285,12 +285,12 @@ const userController = {
     try {
       const { id } = req.params;
       const result = await User.collection().updateOne(
-        { _id: new (require("mongodb").ObjectId)(id) },
-        { $unset: { suspendedUntil: "" }, $set: { updatedAt: new Date() } }
+        { _id: new (require('mongodb').ObjectId)(id) },
+        { $unset: { suspendedUntil: '' }, $set: { updatedAt: new Date() } }
       );
       if (result.matchedCount === 0)
-        return res.status(404).json({ message: "User not found" });
-      res.json({ message: "Seller unsuspended" });
+        return res.status(404).json({ message: 'User not found' });
+      res.json({ message: 'Seller unsuspended' });
     } catch (error) {
       next(error);
     }
@@ -301,12 +301,12 @@ const userController = {
     try {
       const { id } = req.params;
       const result = await User.collection().deleteOne({
-        _id: new (require("mongodb").ObjectId)(id),
+        _id: new (require('mongodb').ObjectId)(id),
       });
       if (result.deletedCount === 0) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
-      res.json({ message: "User deleted" });
+      res.json({ message: 'User deleted' });
     } catch (error) {
       next(error);
     }
@@ -323,10 +323,10 @@ const userController = {
       });
 
       if (!updatedUser.matchedCount) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
 
-      res.json({ message: "Profile updated successfully" });
+      res.json({ message: 'Profile updated successfully' });
     } catch (error) {
       next(error);
     }
@@ -336,7 +336,7 @@ const userController = {
   updateUserWishlist: async (req, res) => {
     const { id } = req.params;
     const { wishlist } = req.body;
-    console.log("Received body:", req.body);
+    console.log('Received body:', req.body);
 
     try {
       if (
@@ -344,14 +344,12 @@ const userController = {
         req.user.userId &&
         req.user.userId.toString() !== id.toString()
       ) {
-        return res
-          .status(403)
-          .json({
-            message: "You are not allowed to modify this user's wishlist",
-          });
+        return res.status(403).json({
+          message: "You are not allowed to modify this user's wishlist",
+        });
       }
 
-      const { ObjectId } = require("mongodb");
+      const { ObjectId } = require('mongodb');
 
       // Build a safe filter: prefer ObjectId _id when valid, otherwise fall back to uid
       const isValidObjectId = (val) => {
@@ -373,16 +371,14 @@ const userController = {
         });
 
         if (result.matchedCount === 0) {
-          return res.status(404).json({ message: "User not found" });
+          return res.status(404).json({ message: 'User not found' });
         }
 
         const updatedUser = await User.findById(id);
-        return res
-          .status(200)
-          .json({
-            message: "Wishlist updated successfully",
-            wishlist: updatedUser.wishlist || [],
-          });
+        return res.status(200).json({
+          message: 'Wishlist updated successfully',
+          wishlist: updatedUser.wishlist || [],
+        });
       }
 
       // Single-item addition
@@ -390,13 +386,13 @@ const userController = {
 
       // Normalize nested payloads like { bookId: { bookId: 'book9' } }
       let normalizedBookId = null;
-      if (typeof bookId === "string") normalizedBookId = bookId;
-      else if (bookId && typeof bookId === "object")
+      if (typeof bookId === 'string') normalizedBookId = bookId;
+      else if (bookId && typeof bookId === 'object')
         normalizedBookId = bookId.bookId || bookId.id || null;
 
       // If `book` is provided, try to extract an id from common fields
       let normalizedBook = null;
-      if (book && typeof book === "object") {
+      if (book && typeof book === 'object') {
         normalizedBook = book;
         if (
           !normalizedBook.id &&
@@ -407,25 +403,23 @@ const userController = {
       }
 
       if (!normalizedBook && !normalizedBookId) {
-        return res
-          .status(400)
-          .json({
-            message:
-              "Request must include wishlist array or a book/bookId to add",
-          });
+        return res.status(400).json({
+          message:
+            'Request must include wishlist array or a book/bookId to add',
+        });
       }
       const itemToAdd = normalizedBook || { id: normalizedBookId };
       // Ensure the stored wishlist is an array. Some older documents may have wishlist as a string
       // which causes MongoDB to reject $addToSet. Normalize it to an array first.
       const existingUser = await User.findById(id);
       if (!existingUser) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
 
       try {
         if (existingUser.wishlist && !Array.isArray(existingUser.wishlist)) {
           // Attempt to parse JSON stringified array if possible, otherwise replace with empty array
-          if (typeof existingUser.wishlist === "string") {
+          if (typeof existingUser.wishlist === 'string') {
             try {
               const parsed = JSON.parse(existingUser.wishlist);
               if (Array.isArray(parsed)) {
@@ -461,37 +455,33 @@ const userController = {
         });
 
         if (addResult.matchedCount === 0) {
-          return res.status(404).json({ message: "User not found" });
+          return res.status(404).json({ message: 'User not found' });
         }
       } catch (updateErr) {
-        console.error("Error when adding to wishlist, updateErr:", updateErr);
+        console.error('Error when adding to wishlist, updateErr:', updateErr);
         // As a fallback, replace the wishlist with a single-item array
         try {
           await User.collection().updateOne(filter, {
             $set: { wishlist: [itemToAdd], updatedAt: new Date() },
           });
         } catch (fallbackErr) {
-          console.error("Fallback error setting wishlist array:", fallbackErr);
-          return res
-            .status(500)
-            .json({
-              message: "Error updating wishlist",
-              error: String(fallbackErr),
-            });
+          console.error('Fallback error setting wishlist array:', fallbackErr);
+          return res.status(500).json({
+            message: 'Error updating wishlist',
+            error: String(fallbackErr),
+          });
         }
       }
       const updatedUser2 = await User.findById(id);
-      return res
-        .status(200)
-        .json({
-          message: "Wishlist updated successfully",
-          wishlist: updatedUser2.wishlist || [],
-        });
+      return res.status(200).json({
+        message: 'Wishlist updated successfully',
+        wishlist: updatedUser2.wishlist || [],
+      });
     } catch (error) {
-      console.error("Error in updateUserWishlist:", error);
+      console.error('Error in updateUserWishlist:', error);
       res
         .status(500)
-        .json({ message: "Error updating wishlist", error: error.message });
+        .json({ message: 'Error updating wishlist', error: error.message });
     }
   },
 };

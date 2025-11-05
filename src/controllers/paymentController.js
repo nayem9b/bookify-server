@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 
 // POST /api/payments
 async function createPayment(req, res, next) {
@@ -9,7 +9,7 @@ async function createPayment(req, res, next) {
 
     // Dynamically import publisher (supports mixed module systems)
     const publisherModule = await import(
-      "../messaging/publishers/payment_event_publisher.js"
+      '../messaging/publishers/payment_event_publisher.js'
     );
     const publishPaymentEvent =
       publisherModule.publishPaymentEvent || publisherModule.default;
@@ -17,14 +17,14 @@ async function createPayment(req, res, next) {
     if (!publishPaymentEvent) {
       return res
         .status(500)
-        .json({ message: "Payment publisher not available" });
+        .json({ message: 'Payment publisher not available' });
     }
 
     // Build a minimal payment payload if caller sent partial data
     const payload = {
       id: payment.id || payment.orderId || `order-${Date.now()}`,
       total: payment.total || payment.amount || null,
-      currency: payment.currency || "USD",
+      currency: payment.currency || 'USD',
       items: payment.items || [],
       metadata: payment.metadata || {},
     };
@@ -33,11 +33,11 @@ async function createPayment(req, res, next) {
 
     return res
       .status(200)
-      .json({ message: "Payment event published", payment: payload });
+      .json({ message: 'Payment event published', payment: payload });
   } catch (error) {
-    console.error("Error in createPayment:", error);
+    console.error('Error in createPayment:', error);
     return res.status(500).json({
-      message: "Failed to publish payment event",
+      message: 'Failed to publish payment event',
       error: String(error),
     });
   }
