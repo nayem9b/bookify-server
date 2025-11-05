@@ -24,7 +24,65 @@ const {
 } = require("./metrics/metrics_utils");
 // Logging
 const expressWinston = require("express-winston");
-const logger = require("./config/logger");
+// The project provides a logging wrapper at server/src/logging/log.js which
+// exposes methods like `info`, `error`, `debug`, `http`, and `warning`.
+// express-winston expects a Winston-like instance with a `.log` method.
+// Create a small adapter here that delegates to the wrapper and exposes
+// both `.log` and `.warn` (alias to `warning`) so existing code keeps working.
+const rawLogger = require("../src/logging/log");
+
+const logger = {
+  info: rawLogger.info.bind(rawLogger),
+  error: rawLogger.error.bind(rawLogger),
+  debug: rawLogger.debug.bind(rawLogger),
+  http: rawLogger.http
+    ? rawLogger.http.bind(rawLogger)
+    : rawLogger.info.bind(rawLogger),
+  // provide warn alias used in some places (wrapper uses `warning`)
+  warn: rawLogger.warning
+    ? rawLogger.warning.bind(rawLogger)
+    : rawLogger.warn && rawLogger.warn.bind(rawLogger),
+  // child is a noop adapter to keep callers safe (the wrapper has child but returns a logger)
+  child: (data) => {
+    if (typeof rawLogger.child === "function") return rawLogger.child(data);
+    return logger;
+  },
+  // express-winston expects a `.log(level, message, meta)` function. Support
+  // both signature forms: (level, msg, meta) and (infoObject).
+  log: function (level, msg, meta) {
+    try {
+      // Called with an info object: log({ level, message, ... })
+      if (typeof level === "object" && level !== null) {
+        const info = level;
+        const lvl = info.level || info.severity || "info";
+        const message = info.message || JSON.stringify(info);
+        const metadata = info.meta || info;
+        if (typeof rawLogger[lvl] === "function") {
+          rawLogger[lvl](message, metadata);
+        } else {
+          rawLogger.info(message, metadata);
+        }
+        return;
+      }
+
+      // Called as (level, message, meta)
+      const lvl = String(level || "info");
+      const message = msg;
+      const metadata = meta;
+      if (typeof rawLogger[lvl] === "function") {
+        rawLogger[lvl](message, metadata);
+      } else if (lvl === "warn" && typeof rawLogger.warning === "function") {
+        rawLogger.warning(message, metadata);
+      } else {
+        rawLogger.info(message, metadata);
+      }
+    } catch (e) {
+      // fallback to console to avoid breaking request handling
+      // eslint-disable-next-line no-console
+      console.error("Logger adapter error:", e && e.message ? e.message : e);
+    }
+  },
+};
 
 // Middleware
 app.use(cors());
