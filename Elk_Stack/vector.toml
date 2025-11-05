@@ -1,15 +1,28 @@
 [sources.docker_logs]
 type = "docker_logs"
-include_containers = ["*nginx*", "elk_stack-nginx-1"]
+include_containers = ["*bookify*", "*api*", "*service*", "*payment*", "*order*", "*product*", "*elk_stack*", "*gateway*"]
+exclude_containers = ["elk_stack-vector-1"]  # Avoid infinite loop if Vector logs to itself
 docker_host = "unix:///var/run/docker.sock"
 
 [transforms.parse_docker]
 type = "remap"
 inputs = ["docker_logs"]
 source = '''
-. = parse_json!(.message)
+# Handle different log formats that Winston might output
+
+# Check if message looks like a JSON object
+if match!(.message, r'^\{.*\}$') {
+  parsed_log = parse_json!(.message)
+  # If parsing succeeds, merge with existing fields
+  . = merge!(., parsed_log)
+} else {
+  # For non-JSON logs, store in log_message field
+  .log_message = .message
+}
+
+# Ensure we have basic fields  
 .timestamp = to_unix_timestamp(now())
-.container_name = .container_name
+.source = "winston"  # Mark as Winston log source
 '''
 
 [sinks.logstash]
