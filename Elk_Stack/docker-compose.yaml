@@ -4,14 +4,14 @@ services:
     volumes:
       - ./vector.toml:/etc/vector/vector.toml
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    command: ["--config", "/etc/vector/vector.toml", "--verbose"]
+    command: ['--config', '/etc/vector/vector.toml', '--verbose']
     depends_on:
       - logstash
     networks:
       - logs-pipeline
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "vector", "validate", "--config", "/etc/vector/vector.toml"]
+      test: ['CMD', 'vector', 'validate', '--config', '/etc/vector/vector.toml']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -25,7 +25,7 @@ services:
       - xpack.security.enabled=true
       # Bootstrap password for the built-in 'elastic' superuser (change for production)
       - ELASTIC_PASSWORD=changeme
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
     ports:
       - 9200:9200
     networks:
@@ -34,8 +34,8 @@ services:
   logstash:
     image: logstash:8.17.4
     ports:
-      - "5044:5044"
-      - "9600:9600"
+      - '5044:5044'
+      - '9600:9600'
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash.yml:/usr/share/logstash/config/logstash.yml:ro
@@ -53,7 +53,7 @@ services:
   kibana:
     image: kibana:8.17.4
     ports:
-      - "5601:5601"
+      - '5601:5601'
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       # Enable Kibana security and use kibana_system credentials (set below)
@@ -74,17 +74,17 @@ services:
   # elastic
   # changeme
 
-#   cd /home/nayems/Desktop/Bookify/server/Elk_Stack && \
-# curl -u elastic:changeme -sS -X PUT "http://localhost:9200/_security/role/logstash_writer_role" -H "Content-Type: application/json" -d '{"cluster":["monitor","manage_index_templates","manage"],"indices":[{"names":["*"],"privileges":["write","create_index","manage","monitor"]}]}' && \
-# # show role
-# curl -u elastic:changeme -sS "http://localhost:9200/_security/role/logstash_writer_role?pretty" && \
-# # restart logstash and tail logs
-# docker compose restart logstash && sleep 3 && docker compose logs --no-color --since 1m logstash | sed -n '1,240p'
+  #   cd /home/nayems/Desktop/Bookify/server/Elk_Stack && \
+  # curl -u elastic:changeme -sS -X PUT "http://localhost:9200/_security/role/logstash_writer_role" -H "Content-Type: application/json" -d '{"cluster":["monitor","manage_index_templates","manage"],"indices":[{"names":["*"],"privileges":["write","create_index","manage","monitor"]}]}' && \
+  # # show role
+  # curl -u elastic:changeme -sS "http://localhost:9200/_security/role/logstash_writer_role?pretty" && \
+  # # restart logstash and tail logs
+  # docker compose restart logstash && sleep 3 && docker compose logs --no-color --since 1m logstash | sed -n '1,240p'
 
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - '80:80'
     networks:
       - logs-pipeline
     restart: unless-stopped

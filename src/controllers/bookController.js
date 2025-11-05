@@ -4,27 +4,27 @@ const CACHE_KEY = 'all_books';
 
 const bookController = {
   // Get all books
-getAllBooks : async (req, res, next) => {
-  try {
-    // Try to get data from cache first
-    const cachedData = await getCachedData(CACHE_KEY);
-    if (cachedData) {
-      console.log('Serving from cache');
-      return res.status(200).json(cachedData);
-    }
+  getAllBooks: async (req, res, next) => {
+    try {
+      // Try to get data from cache first
+      const cachedData = await getCachedData(CACHE_KEY);
+      if (cachedData) {
+        console.log('Serving from cache');
+        return res.status(200).json(cachedData);
+      }
 
-    // If not in cache, get from database
-    console.log('Cache miss, querying database');
-    const books = await Book.findAll();
-    
-    // Cache the data for future requests
-    await cacheData(CACHE_KEY, books);
-    
-    res.status(200).json(books);
+      // If not in cache, get from database
+      console.log('Cache miss, querying database');
+      const books = await Book.findAll();
+
+      // Cache the data for future requests
+      await cacheData(CACHE_KEY, books);
+
+      res.status(200).json(books);
     } catch (error) {
-    next(error);
-  }
-},
+      next(error);
+    }
+  },
 
   // Get single book by ID
   getBookById: async (req, res, next) => {
@@ -73,7 +73,7 @@ getAllBooks : async (req, res, next) => {
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 module.exports = bookController;

@@ -12,16 +12,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "lint-staged": {
-    "src/*.js": [
-      "yarn format",
-      "yarn test --findRelatedTests --bail"
-    ]
-  },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "pretty-quick --staged",
+      "eslint --fix",
+      "git add"
+    ]
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -43,12 +45,16 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "husky": "^8.0.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0",
+    "husky": "^8.0.3",
     "lint-staged": "^16.2.6",
     "nodemon": "^3.0.1",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "pretty-quick": "^4.2.2"
   }
 }

@@ -1,12 +1,12 @@
-const { z } = require("zod");
-const { ObjectId } = require("mongodb");
-const { getDB } = require("../config/db");
+const { z } = require('zod');
+const { ObjectId } = require('mongodb');
+const { getDB } = require('../config/db');
 
 const userSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
   // password: z.string().min(6, 'Password must be at least 6 characters'),
-  role: z.enum(["user", "admin", "seller"]).default("user"),
+  role: z.enum(['user', 'admin', 'seller']).default('user'),
   suspendedUntil: z.date().optional(),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
@@ -14,7 +14,7 @@ const userSchema = z.object({
 
 class User {
   static collection() {
-    return getDB().collection("signedUsers");
+    return getDB().collection('signedUsers');
   }
 
   static async validate(data) {

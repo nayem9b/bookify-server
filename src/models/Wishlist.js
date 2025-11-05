@@ -4,7 +4,7 @@ const { getDB } = require('../config/db');
 const wishlistSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
   bookId: z.string().min(1, 'Book ID is required'),
-  addedAt: z.date().default(() => new Date())
+  addedAt: z.date().default(() => new Date()),
 });
 
 class Wishlist {
@@ -31,7 +31,7 @@ class Wishlist {
     return this.collection().insertOne({
       userId,
       bookId,
-      addedAt: new Date()
+      addedAt: new Date(),
     });
   }
 
@@ -44,11 +44,11 @@ class Wishlist {
             from: 'CategoryBooks',
             localField: 'bookId',
             foreignField: '_id',
-            as: 'book'
-          }
+            as: 'book',
+          },
         },
         { $unwind: '$book' },
-        { $sort: { addedAt: -1 } }
+        { $sort: { addedAt: -1 } },
       ])
       .toArray();
   }

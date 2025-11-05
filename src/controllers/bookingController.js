@@ -22,7 +22,7 @@ const bookingController = {
         bookId,
         userId,
         returnDate,
-        status: 'pending'
+        status: 'pending',
       });
 
       res.status(201).json({
@@ -32,8 +32,8 @@ const bookingController = {
           bookId,
           userId,
           returnDate,
-          status: 'pending'
-        }
+          status: 'pending',
+        },
       });
     } catch (error) {
       next(error);
@@ -81,7 +81,7 @@ const bookingController = {
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 module.exports = bookingController;

@@ -3,7 +3,6 @@ require('dotenv').config();
 
 const uri = `${process.env.DATABASE_URI}`;
 
-
 let client;
 let db;
 
@@ -26,5 +25,5 @@ module.exports = {
   connectDB,
   getDB,
   getClient,
-  db
+  db,
 };

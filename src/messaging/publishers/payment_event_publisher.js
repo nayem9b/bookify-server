@@ -1,4 +1,4 @@
-import { getKafkaProducer } from "../kafka.js";
+import { getKafkaProducer } from '../kafka.js';
 
 /**
  * Publish a payment/checkout event to Kafka.
@@ -10,17 +10,17 @@ import { getKafkaProducer } from "../kafka.js";
 export async function publishPaymentEvent(
   payment = {},
   user = {},
-  topic = "bookify.payments"
+  topic = 'bookify.payments'
 ) {
   const safeUser = user || {};
 
   const payload = {
-    event: "payment.created",
+    event: 'payment.created',
     timestamp: new Date().toISOString(),
     payment: {
       id: payment.id || payment.orderId || null,
       amount: payment.amount ?? payment.total ?? null,
-      currency: payment.currency || "USD",
+      currency: payment.currency || 'USD',
       items: payment.items || [],
       metadata: payment.metadata || {},
     },

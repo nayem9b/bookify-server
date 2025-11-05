@@ -5,11 +5,11 @@ let client;
 
 const connectRedis = async () => {
   client = createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6379'
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
   });
 
   client.on('error', (err) => console.log('Redis Client Error', err));
-  
+
   await client.connect();
   console.log('Connected to Redis');
   return client;
@@ -22,7 +22,8 @@ const getClient = () => {
   return client;
 };
 
-const cacheData = async (key, data, ttl = 3600) => { // Default TTL: 1 hour
+const cacheData = async (key, data, ttl = 3600) => {
+  // Default TTL: 1 hour
   const client = getClient();
   await client.setEx(key, ttl, JSON.stringify(data));
 };
@@ -37,5 +38,5 @@ module.exports = {
   connectRedis,
   getClient,
   cacheData,
-  getCachedData
+  getCachedData,
 };

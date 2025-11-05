@@ -7,6 +7,7 @@ This guide provides step-by-step instructions for setting up the Bookify server 
 Before starting the setup, ensure you have the following:
 
 ### Local Development Prerequisites:
+
 - Node.js v18.x
 - Yarn package manager
 - Docker v20.x or higher
@@ -16,12 +17,13 @@ Before starting the setup, ensure you have the following:
 - Redis server (or Docker container)
 
 ### Production Prerequisites:
+
 - Kubernetes cluster (e.g., Minikube, Kind, EKS, GKE, AKS)
 - Kubectl configured to connect to your cluster
 - Helm (optional, for advanced deployments)
 - Docker image registry (Docker Hub, ECR, GCR, etc.)
 
-##  Environment Setup
+## Environment Setup
 
 ### 1. Clone the Repository
 
@@ -79,7 +81,7 @@ PAYMENT_GATEWAY_API_KEY=your_payment_gateway_key
 ALLOWED_ORIGINS=http://localhost:3000,https://your-frontend-domain.com
 ```
 
-##  Docker Setup
+## Docker Setup
 
 ### 1. Build the Docker Image
 
@@ -138,6 +140,7 @@ docker-compose -f docker-compose.kafka.yml down
 docker stop bookify-server
 docker rm bookify-server
 ```
+
 ## Kubernetes Deployment
 
 ### 1. Prepare Your Kubernetes Environment
@@ -222,11 +225,12 @@ kubectl scale deployment bookify-server -n bookify --replicas=3
 kubectl get deployment bookify-server -n bookify
 ```
 
-##  Redpanda Kafka Setup
+## Redpanda Kafka Setup
 
 ### 1. Understanding the Kafka Integration
 
 Bookify uses Redpanda (Kafka-compatible) for event streaming:
+
 - `services.created.v1` topic for new service/book creation events
 - Events are published automatically when new books are created
 - Other services can consume these events in real-time
@@ -262,7 +266,8 @@ docker exec -it redpanda-bookify rpk topic produce services.created.v1
 # Consume messages (in a new terminal)
 docker exec -it redpanda-bookify rpk topic consume services.created.v1 -f '%v\\n'
 ```
-##  Running the Application
+
+## Running the Application
 
 ### Development Mode
 
@@ -289,7 +294,7 @@ docker run -d --env-file .env -p 5000:5000 bookify-server
 kubectl apply -f k8s/
 ```
 
-##  Testing the Setup
+## Testing the Setup
 
 ### 1. Verify Services are Running
 
@@ -335,31 +340,36 @@ docker exec -it redpanda-bookify rpk topic consume services.created.v1 -f 'Consu
 
 Then perform an action that should trigger an event (like creating a new book listing) and verify the event appears in the topic.
 
-##  Troubleshooting
+## Troubleshooting
 
 ### Common Issues and Solutions
 
 #### 1. Unable to Connect to Kafka
+
 - Ensure Redpanda is running: `docker ps | grep redpanda`
 - Check the Kafka broker address in your environment variables
 - Verify the port mapping: `docker port redpanda-bookify`
 
 #### 2. Database Connection Issues
+
 - Verify MongoDB URI is correct in environment variables
 - Check if MongoDB is accessible from your environment
 - For MongoDB Atlas, ensure IP whitelist includes your IP
 
 #### 3. Redis Connection Issues
+
 - Ensure Redis server is running
 - Verify Redis host and port in environment variables
 - Check Redis authentication if password is required
 
 #### 4. Docker Build Failures
+
 - Verify Docker is running: `docker info`
 - Check available disk space
 - Clear Docker build cache: `docker builder prune`
 
 #### 5. Kubernetes Deployment Failures
+
 - Check if all required secrets are created
 - Verify image pull secrets if using private registry
 - Check resource limits and availability in the cluster
@@ -384,38 +394,44 @@ kubectl port-forward service/bookify-service 5000:5000 -n bookify
 kubectl top pods -n bookify
 ```
 
-##  Production Considerations
+## Production Considerations
 
 ### Security
+
 - Use Kubernetes secrets for sensitive data
 - Enable authentication for Kafka/Redpanda
 - Implement proper network policies
 - Use HTTPS and SSL/TLS encryption
 
 ### Monitoring and Logging
+
 - Set up centralized logging (ELK stack, Fluentd, etc.)
 - Implement metrics collection (Prometheus, Grafana)
 - Set up health checks and alerts
 
 ### Scaling
+
 - Configure Horizontal Pod Autoscaler (HPA)
 - Use load balancers for traffic distribution
 - Implement circuit breakers and resilience patterns
 
 ### Backup and Recovery
+
 - Regular database backups
 - Kafka topic backup strategies
 - Disaster recovery plan
 
-##  Upgrading and Maintenance
+## Upgrading and Maintenance
 
 ### Updating the Application
+
 1. Build new Docker image with updated code
 2. Update Kubernetes deployment with new image tag
 3. Use rolling updates to minimize downtime
 4. Monitor application after deployment
 
 ### Kafka Migration
+
 - Plan for schema evolution
 - Use schema registry for message validation
 - Implement backward compatibility

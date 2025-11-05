@@ -16,10 +16,10 @@ const wishlistController = {
 
       // Add to wishlist
       await Wishlist.addToWishlist(userId, bookId);
-      
-      res.status(201).json({ 
+
+      res.status(201).json({
         message: 'Book added to wishlist',
-        wishlistItem: { bookId, userId }
+        wishlistItem: { bookId, userId },
       });
     } catch (error) {
       if (error.message === 'Book already in wishlist') {
@@ -61,13 +61,13 @@ const wishlistController = {
     try {
       const { bookId } = req.params;
       const userId = req.user.userId;
-      
+
       const isInWishlist = await Wishlist.isInWishlist(userId, bookId);
       res.json({ inWishlist: isInWishlist });
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 module.exports = wishlistController;

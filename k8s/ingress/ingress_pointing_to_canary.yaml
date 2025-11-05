@@ -1,4 +1,3 @@
-
 # Canary Ingress for Bookify application
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -6,21 +5,21 @@ metadata:
   name: bookify-canary
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/canary: "true"
-    nginx.ingress.kubernetes.io/canary-weight: "20"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/canary: 'true'
+    nginx.ingress.kubernetes.io/canary-weight: '20'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
 spec:
   ingressClassName: nginx
   rules:
-  - host: api.bookify.com
-    http:
-      paths:
-      - pathType: Prefix
-        path: /
-        backend:
-          service:
-            name: bookify-canary-service
-            port:
-              number: 5000
+    - host: api.bookify.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: bookify-canary-service
+                port:
+                  number: 5000
