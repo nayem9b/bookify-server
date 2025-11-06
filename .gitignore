@@ -5,5 +5,4 @@ node_modules
 configmap.yaml
 secret.yaml
 *.json
-logging/
 logs/
