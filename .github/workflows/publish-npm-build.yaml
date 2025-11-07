@@ -26,7 +26,7 @@ jobs:
 
       - name: Authenticate to GitHub Packages
         # Use the built-in GITHUB_TOKEN to authenticate to GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GHCR_PAT }}" > ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
 
       - name: Install dependencies
         run: npm install
@@ -36,4 +36,4 @@ jobs:
           # publish to the GitHub Packages registry configured in package.json
           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GHCR_PAT }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
