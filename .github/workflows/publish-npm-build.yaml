@@ -18,7 +18,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Use Node 20 to satisfy package engine requirements (some deps require >=20)
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
@@ -53,7 +54,7 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           release_name: v${{ env.VERSION }}
-          body: "Published to npm: v${{ env.VERSION }}"
+          body: 'Published to npm: v${{ env.VERSION }}'
           draft: false
           prerelease: false
 
