@@ -1,5 +1,5 @@
 {
-  "name": "serverside",
+  "name": "bookify-serv",
   "version": "1.0.0",
   "description": "Backend server for Bookify project",
   "main": "src/server.js",
