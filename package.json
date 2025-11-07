@@ -1,6 +1,6 @@
 {
   "name": "bookify-serv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Backend server for Bookify project",
   "main": "src/server.js",
   "scripts": {
