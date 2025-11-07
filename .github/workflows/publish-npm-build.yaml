@@ -21,19 +21,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # Use the public npm registry for publishing to npmjs.org
-          registry-url: 'https://registry.npmjs.org/'
+          # Use GitHub Packages registry for publishing to the repository Packages
+          registry-url: 'https://npm.pkg.github.com/'
 
-      - name: Authenticate to npm
-        # Writes npm token to ~/.npmrc so npm install / npm publish are authenticated
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Authenticate to GitHub Packages
+        # Use the built-in GITHUB_TOKEN to authenticate to GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GHCR_PAT }}" > ~/.npmrc
 
       - name: Install dependencies
         run: npm install
 
-      - name: Publish to npm
+      - name: Publish to GitHub Packages
         run: |
-          # use the token provided via NODE_AUTH_TOKEN for publish
-          npm publish --access public
+          # publish to the GitHub Packages registry configured in package.json
+          npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GHCR_PAT }}

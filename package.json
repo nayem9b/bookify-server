@@ -1,8 +1,11 @@
 {
-  "name": "bookify-serv",
+  "name": "@nayem9b/bookify-server",
   "version": "1.0.1",
   "description": "Backend server for Bookify project",
   "main": "src/server.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
