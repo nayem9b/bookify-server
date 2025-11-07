@@ -39,10 +39,4 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Automated releases for npm packages.
-        uses: mikeal/merge-release@v4.3.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DEPLOY_DIR: .
-          SRC_PACKAGE_DIR: .
+      
