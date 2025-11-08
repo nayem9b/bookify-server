@@ -52,7 +52,6 @@ jobs:
 
   trivy_fs_scan:
     runs-on: ubuntu-latest
-    needs: gitleaks-scan
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
