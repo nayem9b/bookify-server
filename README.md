@@ -15,7 +15,6 @@ Bookify is a comprehensive online book marketplace platform that connects buyers
 - [Environment Variables](#-environment-variables)
 - [Project Structure](#-project-structure)
 - [Development](#-development)
-- [Troubleshooting](#-troubleshooting)
 
 ## Features
 
