@@ -131,7 +131,7 @@ app.use((req, res, next) => {
 // Database connection
 connectDB();
 // Connect to Redis
-connectRedis().catch((err) => logger.error('Redis connection error:', err));
+// connectRedis().catch((err) => logger.error('Redis connection error:', err));
 
 // Routes
 app.use('/api/books', bookRoutes);
@@ -164,8 +164,8 @@ const PORT = process.env.PORT || 5000;
 const main = async () => {
   //init kafka
   try {
-    await initKafka();
-    logger.info('Kafka initialized successfully');
+    // await initKafka();
+    // logger.info('Kafka initialized successfully');
     app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);
     });
