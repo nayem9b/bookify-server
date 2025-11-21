@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookify-server
+  namespace: bookify
+  labels:
+    app: bookify-server
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "5000"
+    prometheus.io/path: "/metrics"
+spec:
+  selector:
+    app: bookify-server
+  ports:
+    - name: http-5000
+      port: 5000
+      targetPort: 5000
+      protocol: TCP
+  type: ClusterIP  # Changed from LoadBalancer for internal access

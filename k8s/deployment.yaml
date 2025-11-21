@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookify-server
+  namespace: bookify
+spec:
+  selector:
+    matchLabels:
+      app: bookify-server
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: bookify-server
+    spec:
+      containers:
+        - name: bookify-server
+          image: nayem9b/bookify-backend-github-build:latest
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: bookify-backend-secret
+                  key: DATABASE_URI
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: bookify-backend-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookify-backend-secret
+                  key: DB_PASSWORD
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookify-backend-secret
+                  key: REDIS_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bookify-backend-secret
+                  key: JWT_SECRET
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+              name: http-5000  # Changed to match service port name

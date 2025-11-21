@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: bookify-server-monitor
+  namespace: bookify
   labels:
     release: kube-prometheus-stack
 spec:
@@ -12,3 +13,5 @@ spec:
     - port: http-5000
       path: /metrics
       interval: 10s
+      # Adding honorLabels to preserve labels from the target
+      honorLabels: true
