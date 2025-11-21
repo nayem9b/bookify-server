@@ -9,6 +9,6 @@ spec:
     matchLabels:
       app: bookify-server
   endpoints:
-    - port: http
+    - port: http-5000
       path: /metrics
       interval: 10s
