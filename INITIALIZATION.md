@@ -8,7 +8,7 @@ Before starting the setup, ensure you have the following:
 
 ### Local Development Prerequisites:
 
-- Node.js v18.x
+- Node.js v24.x
 - Yarn package manager
 - Docker v20.x or higher
 - Docker Compose v2.x or higher

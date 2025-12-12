@@ -4,17 +4,17 @@ pipeline {
         // SONAR_HOME = tool "Sonar"
         DOCKER_IMAGE = "nayem9b/sheba-backend-jenkins-build"
         DOCKER_TAG = "jenkins-build-${BUILD_NUMBER}"
-        SONAR_SERVER = 'SonarQube' 
-        SONAR_TOKEN = credentials('sonar-token') 
-        SONAR_HOST_URL = 'http://127.0.0.1:9000' 
-        
+        SONAR_SERVER = 'SonarQube'
+        SONAR_TOKEN = credentials('sonar-token')
+        SONAR_HOST_URL = 'http://127.0.0.1:9000'
 
-        PROJECT_KEY = 'sheba' 
-        PROJECT_NAME = 'sheba' 
+
+        PROJECT_KEY = 'sheba'
+        PROJECT_NAME = 'sheba'
         PROJECT_VERSION = '1.0.0'
-    
 
-        NODE_VERSION = '18' 
+
+        NODE_VERSION = '24'
     }
     stages {
         stage("Clone Code from Github") {
@@ -36,7 +36,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Run Tests') {
             steps {
                 script {
@@ -44,21 +44,21 @@ pipeline {
                     sh '''
                         # Run your test command (adjust based on your test setup)
                         npm test || true
-                        
+
                         # If you're using Jest and want coverage
                         # npm run test:coverage || true
-                        
+
                         # If you're using other test frameworks, adjust accordingly
                     '''
                 }
             }
         }
-        
+
         stage('SonarQube Analysis') {
             steps {
                 script {
                     echo "Starting SonarQube analysis..."
-                    
+
                     withSonarQubeEnv("${SONAR_SERVER}") {
                         sh '''
                             # Using SonarQube Scanner CLI
@@ -77,7 +77,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Quality Gate') {
             steps {
                 script {
