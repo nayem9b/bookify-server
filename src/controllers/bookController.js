@@ -29,12 +29,23 @@ const bookController = {
   // Get single book by ID
   getBookById: async (req, res, next) => {
     try {
-      const book = await Book.findById(req.params.id);
+      const { id } = req.params;
+      console.log('Fetching book with ID:', id);
+
+      if (!id) {
+        return res.status(400).json({ message: 'Book ID is required' });
+      }
+
+      const book = await Book.findById(id);
+      console.log('Book found:', book);
+
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });
       }
-      res.json(book);
+
+      res.status(200).json(book);
     } catch (error) {
+      console.error('Error in getBookById:', error.message);
       next(error);
     }
   },

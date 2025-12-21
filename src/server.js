@@ -128,8 +128,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Database connection
-connectDB();
+// Database connection - will be awaited in main()
 // Connect to Redis
 // connectRedis().catch((err) => logger.error('Redis connection error:', err));
 
@@ -162,6 +161,9 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const main = async () => {
+  // Connect to database before starting server
+  await connectDB();
+
   //init kafka
   try {
     // await initKafka();

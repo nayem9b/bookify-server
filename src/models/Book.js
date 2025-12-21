@@ -36,7 +36,8 @@ class Book {
 
   static async findById(id) {
     console.log(id);
-    return this.collection().findOne({ _id: new ObjectId(id) });
+    // Query by string ID since _id is stored as string in database
+    return this.collection().findOne({ _id: id });
   }
 
   static async findAll() {
@@ -48,14 +49,11 @@ class Book {
     if (!validation.success) {
       throw new Error(`Validation failed: ${validation.error}`);
     }
-    return this.collection().updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updateData }
-    );
+    return this.collection().updateOne({ _id: id }, { $set: updateData });
   }
 
   static async delete(id) {
-    return this.collection().deleteOne({ _id: new ObjectId(id) });
+    return this.collection().deleteOne({ _id: id });
   }
 }
 
