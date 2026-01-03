@@ -423,29 +423,25 @@ const userController = {
             try {
               const parsed = JSON.parse(existingUser.wishlist);
               if (Array.isArray(parsed)) {
-                await User.collection().updateOne(
-                  { _id: new ObjectId(id) },
-                  { $set: { wishlist: parsed, updatedAt: new Date() } }
-                );
+                await User.collection().updateOne(filter, {
+                  $set: { wishlist: parsed, updatedAt: new Date() },
+                });
               } else {
-                await User.collection().updateOne(
-                  { _id: new ObjectId(id) },
-                  { $set: { wishlist: [], updatedAt: new Date() } }
-                );
+                await User.collection().updateOne(filter, {
+                  $set: { wishlist: [], updatedAt: new Date() },
+                });
               }
             } catch (parseErr) {
               // Not JSON — overwrite with empty array to allow $addToSet
-              await User.collection().updateOne(
-                { _id: new ObjectId(id) },
-                { $set: { wishlist: [], updatedAt: new Date() } }
-              );
+              await User.collection().updateOne(filter, {
+                $set: { wishlist: [], updatedAt: new Date() },
+              });
             }
           } else {
             // Non-string/non-array (number, boolean, etc.) — reset to empty array
-            await User.collection().updateOne(
-              { _id: new ObjectId(id) },
-              { $set: { wishlist: [], updatedAt: new Date() } }
-            );
+            await User.collection().updateOne(filter, {
+              $set: { wishlist: [], updatedAt: new Date() },
+            });
           }
         }
 
