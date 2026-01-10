@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         app: bookify-server
-    namespace: bookify
+    namespace: default
     spec:
       containers:
         - name: bookify-server

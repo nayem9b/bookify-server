@@ -302,7 +302,7 @@ Check that all required services are accessible:
 
 ```bash
 # Check if the server is responding
-curl http://localhost:5000/
+curl https://bookify-serverside.onrender.com/
 
 # Check MongoDB connection (if using a test script)
 node test-db-connection.js
@@ -318,13 +318,13 @@ node test-kafka-connection.js
 
 ```bash
 # Health check
-curl http://localhost:5000/
+curl https://bookify-serverside.onrender.com/
 
 # Get categories
-curl http://localhost:5000/api/categories
+curl https://bookify-serverside.onrender.com/api/categories
 
 # Test user registration (example)
-curl -X POST http://localhost:5000/api/users/register \
+curl -X POST https://bookify-serverside.onrender.com/api/users/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 ```
