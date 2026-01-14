@@ -17,11 +17,11 @@ spec:
         - name: bookify-server
           image: nayem9b/bookify-backend-github-build:latest
           env:
-            - name: DATABASE_URI
+            - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: bookify-backend-secret
-                  key: DATABASE_URI
+                  key: DATABASE_URL
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -45,4 +45,4 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
-              name: http-5000  # Changed to match service port name
+              name: http-5000 # Changed to match service port name

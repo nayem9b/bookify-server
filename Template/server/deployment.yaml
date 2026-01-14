@@ -19,11 +19,11 @@ spec:
           #   - name: config-volume
           #     mountPath: /opt/config
           env:
-            - name: DATABASE_URI
+            - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: bookify-backend-secret
-                  key: DATABASE_URI
+                  key: DATABASE_URL
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
