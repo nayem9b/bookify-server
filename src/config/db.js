@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-const uri = `${process.env.DATABASE_URI}`;
+const uri = `${process.env.DATABASE_URL}`;
 console.log(uri);
 
 let client;
